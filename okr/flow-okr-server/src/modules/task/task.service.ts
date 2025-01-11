@@ -64,6 +64,51 @@ export class TaskService {
         return newTask;
     }
 
+    // TODO: API Controller 생성 후 Front 연결
+    async getTaskTree(): Promise<any> {
+        // TaskClosure에서 모든 데이터를 가져오기
+        const closures = await this.taskClosureRepository.find({
+            relations: ['ancestor', 'descendant'],
+        });
+
+        // Map으로 트리 데이터 구성
+        const taskMap = new Map<number, any>();
+
+        closures.forEach((closure) => {
+            const ancestorId = closure.ancestor.id;
+            const descendantId = closure.descendant.id;
+
+            // 조상 노드 초기화
+            if (!taskMap.has(ancestorId)) {
+                taskMap.set(ancestorId, {
+                    id: ancestorId,
+                    content: closure.ancestor.content,
+                    children: [],
+                });
+            }
+
+            // 자손 노드 초기화
+            if (!taskMap.has(descendantId)) {
+                taskMap.set(descendantId, {
+                    id: descendantId,
+                    content: closure.descendant.content,
+                    children: [],
+                });
+            }
+
+            // 자식 노드 연결
+            if (ancestorId !== descendantId) {
+                taskMap.get(ancestorId).children.push(taskMap.get(descendantId));
+            }
+        });
+
+        // 루트 노드 반환 (depth = 0인 노드)
+        return Array.from(taskMap.values()).filter(
+            (task) => closures.find((c) => c.descendant.id === task.id && c.depth === 0),
+        );
+    }
+
+
     async getSubTree(taskId: number) {
         const subTree = await this.taskClosureRepository
             .createQueryBuilder("closure")
