@@ -1,7 +1,6 @@
-import React, {memo, useEffect, useState} from "react";
+import React, {memo, useState} from "react";
 import {Handle, Position} from "reactflow";
 import {FlowOkrNode} from "@/interfaces/FlowOkrNode.interface";
-import {Button} from "@/components/ui/button";
 import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
 import {
@@ -18,6 +17,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+import FlowOkrNodeDetail from "@/components/map/FlowOkrNodeDetail";
 
 const chartConfig = {
     rate: {
@@ -34,6 +34,11 @@ const chartConfig = {
 export default memo(({ data }: FlowOkrNode) => {
 
     const [chartData, setChartData] = useState([{kpi: "kpi", rate: data.rate, fill: "var(--color-rate)"}, {kpi: "other", rate: 100 - data.rate, fill: "var(--color-other)"}])
+    const [showDetail, setShowDetail] = useState(false);
+
+    const onNodeClickEvent = () => {
+        setShowDetail(!showDetail);
+    }
 
     return (
         <>
@@ -43,10 +48,15 @@ export default memo(({ data }: FlowOkrNode) => {
                 onConnect={(params) => console.log('handle onConnect', params)}
                 isConnectable={true}
             />
-            <Card className="flex flex-col">
-                <CardHeader className="items-center pb-0">
-                    <CardTitle>{data.title}</CardTitle>
-                    <CardDescription className='text-blue-500'>{data.content}</CardDescription>
+            <Card className="flex flex-col" onClick={onNodeClickEvent}>
+                <CardHeader className="flex flex-row gap-5 items-center justify-between">
+                    <div className="items-center pb-0">
+                        <CardTitle>{data.title}</CardTitle>
+                        <CardDescription className='text-blue-500'>{data.content}</CardDescription>
+                    </div>
+                    {data.rate && data.type &&
+                        <FlowOkrNodeDetail title={data.title} content={data.content} id={data.id} />
+                    }
                 </CardHeader>
                 {data.rate && data.type &&
                     <>

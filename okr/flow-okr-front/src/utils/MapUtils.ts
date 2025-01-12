@@ -12,6 +12,7 @@ export function convertTreeToNodesAndEdges(data: any, x = 0, y = 0, parentId: st
             type: 'flowOkrNode',
             position: { x: posX, y: posY },
             data: {
+                id: node.id,
                 title: node.title,
                 content: node.content,
                 rate: node.rate,

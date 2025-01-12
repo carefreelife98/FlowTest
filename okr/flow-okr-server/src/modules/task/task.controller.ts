@@ -1,6 +1,7 @@
 import {Body, Controller, Get, Inject, Post, Query} from "@nestjs/common";
 import {TaskService} from "./task.service";
 import {AddTaskRequestDto} from "./dto/TaskRequestDto";
+import {AddTaskDetailRequestDto} from "./dto/TaskDetailRequestDto";
 
 @Controller('api/task')
 export class TaskController {
@@ -12,6 +13,12 @@ export class TaskController {
     async addTask(@Body() dto: AddTaskRequestDto) {
         console.log(`ADD TASK DTO ::: ${JSON.stringify(dto)}`);
         return await this.taskService.addTask(dto);
+    }
+
+    @Post('/detail')
+    async addTaskDetail(@Body() dto: AddTaskDetailRequestDto) {
+        console.log(`ADD TASK DETAIL DTO ::: ${JSON.stringify(dto)}`);
+        return await this.taskService.addTaskDetail(dto);
     }
 
     @Get('/total')
@@ -32,5 +39,10 @@ export class TaskController {
     @Get('path')
     async getPath(@Query('taskId') taskId: number) {
         return await this.taskService.getPath(taskId);
+    }
+
+    @Get('/detail')
+    async getTaskDetail(@Query('taskId') taskId: number) {
+        return await this.taskService.getTaskDetail(taskId);
     }
 }
