@@ -10,21 +10,17 @@ import ReactFlow, {
     Node,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import {convertTreeToNodesAndEdges} from "@/utils/MapUtils";
+import {getTotalTaskTree} from "@/api/task/task-api";
+import FlowOkrNode from "@/components/map/FlowOkrNode";
 
-const initialNodes: Node[] = [
-    { id: '1', position: { x: 0, y: 0 }, data: { label: 'Root Node' } },
-    { id: '2', position: { x: 200, y: 100 }, data: { label: 'Child Node 1' } },
-    { id: '3', position: { x: -200, y: 100 }, data: { label: 'Child Node 2' } },
-];
-
-const initialEdges: Edge[] = [
-    { id: 'e1-2', source: '1', target: '2', type: 'smoothstep' },
-    { id: 'e1-3', source: '1', target: '3', type: 'smoothstep' },
-];
+const nodeType = {
+    flowOkrNode: FlowOkrNode,
+}
 
 export default function FlowOkrMap() {
-    const [nodes, setNodes] = useState<Node[]>(initialNodes);
-    const [edges, setEdges] = useState<Edge[]>(initialEdges);
+    const [nodes, setNodes] = useState<Node[]>([]);
+    const [edges, setEdges] = useState<Edge[]>([]);
 
     const onConnect = useCallback(
         (connection: Edge | Connection) => setEdges((eds) => addEdge(connection, eds)),
@@ -32,19 +28,25 @@ export default function FlowOkrMap() {
     );
 
     useEffect(() => {
+        getTotalTaskTree().then(response => {
+            const { nodes, edges } = convertTreeToNodesAndEdges(response);
+            setNodes(nodes);
+            setEdges(edges);
+        });
     }, []);
 
     return (
-        <div style={{ width: '100%', height: '500px' }}>
+        <div className="h-screen w-screen">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
                 onConnect={onConnect}
-                fitView
+                nodeTypes={nodeType}
+                fitView={true}
             >
                 <Background />
                 <Controls />
             </ReactFlow>
         </div>
     );
-};
+}

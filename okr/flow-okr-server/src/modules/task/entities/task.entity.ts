@@ -7,7 +7,16 @@ export class Task {
     id: number;
 
     @Column({ type: "text" })
+    title: string;
+
+    @Column({ type: "text", nullable: true })
     content: string;
+
+    @Column({ type: "int", nullable: true })
+    rate: number;
+
+    @Column({ type: "text", nullable: true })
+    type: string;
 
     @OneToMany(() => TaskClosure, (closure) => closure.ancestor)
     ancestorRelations: TaskClosure[];

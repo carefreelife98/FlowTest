@@ -11,7 +11,12 @@ export class TaskController {
     @Post()
     async addTask(@Body() dto: AddTaskRequestDto) {
         console.log(`ADD TASK DTO ::: ${JSON.stringify(dto)}`);
-        return await this.taskService.addTask(dto.content, dto.parentId);
+        return await this.taskService.addTask(dto);
+    }
+
+    @Get('/total')
+    async getTotalTaskTree() {
+        return await this.taskService.getTotalTaskTree();
     }
 
     @Get()
