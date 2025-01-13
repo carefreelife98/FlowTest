@@ -1,6 +1,6 @@
 import {Node, Edge} from "reactflow";
 
-// JSON 데이터를 React Flow의 Nodes 및 Edges로 변환
+// TASK TREE API Response JSON 데이터를 React Flow의 Nodes 및 Edges로 변환
 export function convertTreeToNodesAndEdges(data: any, x = 0, y = 0, parentId: string | null = null) {
     const nodes: Node[] = [];
     const edges: Edge[] = [];

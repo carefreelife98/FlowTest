@@ -28,7 +28,7 @@ export default function FlowOkrNodeDetail({title, content, id}: FlowOkrNodeDetai
         getTaskDetailById(id).then(response => {
             setTaskDetail(response);
         })
-    },[id])
+    },[])
 
     return (
         <div>
