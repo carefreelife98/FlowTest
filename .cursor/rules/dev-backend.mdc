@@ -1,0 +1,100 @@
+---
+description: when using mate-x-backend folder, doing backend related tasks
+globs: 
+alwaysApply: false
+---
+---
+description: 
+globs: packages/back/*
+alwaysApply: false
+---
+# AI-Conv Backend 개발 가이드
+
+## 기술 스택
+- **Framework**: NestJS
+- **Language**: TypeScript (strict 모드)
+- **Database**: PostgreSQL + pgvector
+- **ORM**: Prisma
+- **Validation**: Zod + class-validator
+- **AI Integration**: LangChain.js
+
+## 프로젝트 구조
+```
+packages/back/
+├── src/
+│   ├── ai/                    # AI 관련 서비스
+│   ├── conversations/         # 대화 관리
+│   ├── messages/              # 메시지 관리
+│   ├── prisma/                # Prisma 설정
+│   ├── app.module.ts          # 메인 모듈
+│   └── main.ts                # 진입점
+├── prisma/schema.prisma       # 데이터베이스 스키마
+└── package.json
+```
+
+## 개발 워크플로우
+```bash
+cd packages/back
+npm run dev                 # localhost:3001
+npm run build              # 프로덕션 빌드
+npm run prisma:generate    # Prisma 클라이언트 생성
+npm run prisma:studio      # Prisma Studio 실행
+```
+
+## NestJS 아키텍처
+- 모듈 기반 구조 (Controller, Service, Module)
+- 의존성 주입 패턴
+- 데코레이터 활용 (@Controller, @Injectable)
+- Swagger API 문서 자동 생성
+
+## Prisma ORM + PostgreSQL
+```prisma
+model Conversation {
+  id        String    @id @default(cuid())
+  title     String?
+  createdAt DateTime  @default(now())
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  content        String
+  role           MessageRole
+  conversationId String
+  embedding      Unsupported("vector(1536)")?  // pgvector
+}
+```
+
+## 벡터 검색 (pgvector)
+- OpenAI Embeddings API로 임베딩 생성
+- pgvector extension으로 유사도 검색
+- HNSW 인덱스로 성능 최적화
+```sql
+CREATE INDEX ON messages USING hnsw (embedding vector_cosine_ops);
+```
+
+## AI Integration (LangChain.js)
+- OpenAI GPT 모델 통합
+- 스트리밍 응답 지원
+- 메시지 히스토리 관리
+- 토큰 사용량 추적
+
+## API 설계
+- RESTful API 구조
+- 스트리밍 엔드포인트 제공
+- Zod 스키마로 입력 검증
+- shared 패키지 타입 활용
+
+## 보안 설정
+- CORS 설정
+- Helmet 보안 헤더
+- 환경변수로 API 키 관리
+- Rate limiting (향후 도입)
+
+## 환경 변수
+```bash
+# .env
+DATABASE_URL="postgresql://user:password@localhost:5432/ai_conv"
+OPENAI_API_KEY="your-openai-api-key"
+FRONTEND_URL="http://localhost:3000"
+```

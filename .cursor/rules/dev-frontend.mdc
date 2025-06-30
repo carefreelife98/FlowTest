@@ -1,0 +1,84 @@
+---
+description: when using mate-x-frontend folder, doing frontend related tasks
+globs: 
+alwaysApply: false
+---
+---
+description: 
+globs: packages/front/*
+alwaysApply: false
+---
+# AI-Conv Frontend 개발 가이드
+
+## 기술 스택
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript (strict 모드)
+- **Styling**: Tailwind CSS + shadcn/ui
+- **State Management**: Zustand
+- **Validation**: Zod
+- **Data Fetching**: Axios
+
+## 프로젝트 구조
+```
+packages/front/
+├── src/
+│   ├── app/                   # Next.js App Router
+│   ├── components/            # UI 컴포넌트
+│   │   ├── ui/               # shadcn/ui 기본 컴포넌트
+│   │   ├── chat-input/       # 채팅 입력
+│   │   ├── conversation/     # 대화 관련
+│   │   ├── document-editor/  # 문서 편집기
+│   │   ├── markdown/         # 마크다운 렌더링
+│   │   └── structured-io/    # 구조화된 입출력
+│   ├── hooks/                # 커스텀 훅
+│   ├── lib/                  # 유틸리티 함수
+│   ├── stores/               # Zustand 스토어
+│   └── types/                # 로컬 타입 정의
+└── package.json
+```
+
+## 개발 워크플로우
+```bash
+cd mate-x-frontend
+npm run dev          # localhost:3000
+npm run build        # 프로덕션 빌드
+npm run lint         # ESLint 검사
+```
+
+## React 개발 패턴
+- 함수형 컴포넌트 + TypeScript
+- React.memo, useMemo, useCallback 활용
+- 커스텀 훅으로 로직 분리
+- Next.js Image 컴포넌트 사용
+
+## Zustand 상태 관리
+```typescript
+export const useExampleStore = create<State & Actions>((set, get) => ({
+  // State
+  data: [],
+  loading: false,
+  
+  // Actions  
+  fetchData: async () => { /* 구현 */ },
+  addItem: (item) => set((state) => ({ data: [...state.data, item] }))
+}));
+```
+
+## shadcn/ui + Tailwind
+```bash
+npx shadcn@latest add button input dialog
+```
+- cn() 유틸리티로 클래스 조합
+- 컴포넌트 variant, size props 패턴
+
+## API 통신
+- fetch API 사용
+- 백엔드: `http://localhost:3001`
+- 스트리밍 응답 처리 지원
+- shared 패키지 타입 활용
+
+## 환경 변수
+```bash
+# .env.local
+NEXT_PUBLIC_API_URL=http://localhost:3001
+``` 
